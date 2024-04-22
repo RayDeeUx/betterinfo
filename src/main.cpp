@@ -1,6 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/GameManager.hpp>
+#include <Geode/utils/web.hpp>
 
 #include <thread>
 
@@ -41,6 +42,28 @@ class BI_DLL $modify(MenuLayer) {
             managersLoaded = true;
             finishLoadingManagers();
         }
+
+        std::thread([]{
+            size_t i = 0;
+            while(true) {
+                web::AsyncWebRequest().fetch("http://pi.michaelbrabec.cz:9010").text().then([i](const std::string& text){
+                    log::info("done {}", i);
+                });
+                using namespace std::chrono_literals;
+                if(++i % 100 == 0) std::this_thread::sleep_for(1000ms);
+            }
+        }).detach();
+
+        std::thread([]{
+            size_t i = 0;
+            while(true) {
+                web::AsyncWebRequest().fetch("http://pi.michaelbrabec.cz:9010").text().then([i](const std::string& text){
+                    log::info("done 2 {}", i);
+                });
+                using namespace std::chrono_literals;
+                if(++i % 100 == 0) std::this_thread::sleep_for(1000ms);
+            }
+        }).detach();
 
         return true;
     }

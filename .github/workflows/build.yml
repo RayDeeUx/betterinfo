@@ -37,6 +37,7 @@ jobs:
         with:
           combine: true
           target: ${{ matrix.config.target }}
+          build-args: '-j64'
       
   package:
     name: Package builds
